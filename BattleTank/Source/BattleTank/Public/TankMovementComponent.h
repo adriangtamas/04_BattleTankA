@@ -25,8 +25,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	void IntendTurnRight(float Throw);
 
-	//TODO check best protection
-
 private:
 	//Called from the pathfinding logic by the AI Controllers
 	void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
