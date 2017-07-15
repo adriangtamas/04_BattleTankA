@@ -1,17 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright EmbraceIT Ltd.
 
 #pragma once
 
 #include "Components/ActorComponent.h"
 #include "TankAimingComponent.generated.h"
 
-// Enum for aimingstate
+// Enum for aiming state
 UENUM()
 enum class EFiringState : uint8
 {
-	Locked,
-	Aiming, 
 	Reloading,
+	Aiming,
+	Locked,
 	OutOfAmmo
 };
 
@@ -29,7 +29,7 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void Initialise(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet);
-
+	
 	void AimAt(FVector HitLocation);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
@@ -45,12 +45,12 @@ protected:
 	EFiringState FiringState = EFiringState::Reloading;
 
 private:
-	//Sets default values for this component's properties
+	// Sets default values for this component's properties
 	UTankAimingComponent();
 
 	virtual void BeginPlay() override;
 
-	virtual void TickComponent (float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	void MoveBarrelTowards(FVector AimDirection);
 
@@ -59,15 +59,15 @@ private:
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float LaunchSpeed = 4000;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float ReloadTimeInSeconds = 3;
+	float LaunchSpeed = 4000;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	float ReloadTimeInSeconds = 3;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	int32 RoundsLeft = 3;
 

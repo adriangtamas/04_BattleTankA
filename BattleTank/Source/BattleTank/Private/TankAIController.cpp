@@ -3,7 +3,9 @@
 #include "BattleTank.h"
 #include "TankAimingComponent.h"
 #include "TankAIController.h"
-#include "Tank.h" //So we can implement on death
+#include "Tank.h" // So we can impliment OnDeath
+
+// Depends on movement component via pathfinding system
 
 void ATankAIController::BeginPlay()
 {
@@ -17,14 +19,16 @@ void ATankAIController::SetPawn(APawn* InPawn)
 	{
 		auto PossessedTank = Cast<ATank>(InPawn);
 		if (!ensure(PossessedTank)) { return; }
-		//subscribe our local method to the tank's death event
-		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankAIController::OnPossessedTankDeath);
+
+		// Subscribe our local method to the tank's death event
+		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankAIController::OnPossedTankDeath);
 	}
 }
 
-void ATankAIController::OnPossessedTankDeath()
+void ATankAIController::OnPossedTankDeath()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Received!"))
+	if (!ensure(GetPawn())) { return; } // TODO remove if ok
+	GetPawn()->DetachFromControllerPendingDestroy();
 }
 
 // Called every frame
@@ -36,14 +40,16 @@ void ATankAIController::Tick(float DeltaTime)
 	auto ControlledTank = GetPawn();
 
 	if (!ensure(PlayerTank && ControlledTank)) { return; }
-	// TODO Move towards the player
-	MoveToActor(PlayerTank, AcceptanceRadius);
+	
+	// Move towards the player
+	MoveToActor(PlayerTank, AcceptanceRadius); // TODO check radius is in cm
 
 	// Aim towards the player
 	auto AimingComponent = ControlledTank->FindComponentByClass<UTankAimingComponent>();
 	AimingComponent->AimAt(PlayerTank->GetActorLocation());
+
 	if (AimingComponent->GetFiringState() == EFiringState::Locked)
 	{
-		AimingComponent->Fire();
+		AimingComponent->Fire(); // TODO limit firing rate
 	}
 }
